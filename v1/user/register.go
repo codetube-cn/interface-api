@@ -4,7 +4,7 @@ import (
 	"codetube.cn/core/codes"
 	"codetube.cn/core/service"
 	"codetube.cn/interface-api/interfaces"
-	service_user_register "codetube.cn/proto/service-user-register"
+	"codetube.cn/proto/service_user_register"
 	"context"
 	"github.com/gin-gonic/gin"
 	"log"
@@ -88,13 +88,13 @@ func (r *Register) requestUsername(c *gin.Context) {
 		r.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter password").Abort()
 		return
 	}
-	r.request = &service_user_register.UsernameRequest{
+	r.request = &service_user_register.RegisterUsernameRequest{
 		Username: username,
 		Password: password,
 	}
 	r.registerHandler = func(ctx context.Context, client service_user_register.UserRegisterClient) func() (*service_user_register.RegisterResultResponse, error) {
 		return func() (*service_user_register.RegisterResultResponse, error) {
-			return client.Username(ctx, r.request.(*service_user_register.UsernameRequest))
+			return client.Username(ctx, r.request.(*service_user_register.RegisterUsernameRequest))
 		}
 	}
 }
@@ -110,13 +110,13 @@ func (r *Register) requestEmail(c *gin.Context) {
 		r.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter password").Abort()
 		return
 	}
-	r.request = &service_user_register.EmailRequest{
+	r.request = &service_user_register.RegisterEmailRequest{
 		Email:    email,
 		Password: password,
 	}
 	r.registerHandler = func(ctx context.Context, client service_user_register.UserRegisterClient) func() (*service_user_register.RegisterResultResponse, error) {
 		return func() (*service_user_register.RegisterResultResponse, error) {
-			return client.Email(ctx, r.request.(*service_user_register.EmailRequest))
+			return client.Email(ctx, r.request.(*service_user_register.RegisterEmailRequest))
 		}
 	}
 }
@@ -132,13 +132,13 @@ func (r *Register) requestMobile(c *gin.Context) {
 		r.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter verify_code").Abort()
 		return
 	}
-	r.request = &service_user_register.MobileRequest{
+	r.request = &service_user_register.RegisterMobileRequest{
 		Mobile:     mobile,
 		VerifyCode: verifyCode,
 	}
 	r.registerHandler = func(ctx context.Context, client service_user_register.UserRegisterClient) func() (*service_user_register.RegisterResultResponse, error) {
 		return func() (*service_user_register.RegisterResultResponse, error) {
-			return client.Mobile(ctx, r.request.(*service_user_register.MobileRequest))
+			return client.Mobile(ctx, r.request.(*service_user_register.RegisterMobileRequest))
 		}
 	}
 }
