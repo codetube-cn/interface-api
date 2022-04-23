@@ -8,7 +8,7 @@ import (
 )
 
 //项目需要使用的服务
-var useServices = []string{"User", "Course", "UserRegister"}
+var useServices = []string{"User", "Course", "UserRegister", "UserLogin"}
 
 func init() {
 	//加载 .env 文件环境变量
