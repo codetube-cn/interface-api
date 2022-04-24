@@ -123,22 +123,47 @@ func (l *Login) requestEmail(c *gin.Context) {
 
 func (l *Login) requestMobile(c *gin.Context) {
 	mobile := c.PostForm("mobile")
+	password := c.PostForm("password")
 	verifyCode := c.PostForm("verify_code")
+	//验证类型：密码 或 验证码
+	verifyType := c.PostForm("type")
+	if verifyType != "verify_code" {
+		verifyType = "password"
+	}
+
 	if mobile == "" {
 		l.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter mobile").Abort()
 		return
 	}
-	if verifyCode == "" {
-		l.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter verify_code").Abort()
-		return
-	}
-	l.request = &service_user_login.LoginMobileRequest{
-		Mobile:     mobile,
-		VerifyCode: verifyCode,
-	}
-	l.LoginHandler = func(ctx context.Context, client service_user_login.UserLoginClient) func() (*service_user_login.LoginResultResponse, error) {
-		return func() (*service_user_login.LoginResultResponse, error) {
-			return client.Mobile(ctx, l.request.(*service_user_login.LoginMobileRequest))
+
+	if verifyType == "password" {
+		if verifyType == "password" && password == "" {
+			l.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter password").Abort()
+			return
+		}
+		l.request = &service_user_login.LoginMobilePasswordRequest{
+			Mobile:   mobile,
+			Password: password,
+		}
+		l.LoginHandler = func(ctx context.Context, client service_user_login.UserLoginClient) func() (*service_user_login.LoginResultResponse, error) {
+			return func() (*service_user_login.LoginResultResponse, error) {
+				return client.MobilePassword(ctx, l.request.(*service_user_login.LoginMobilePasswordRequest))
+			}
+		}
+	} else {
+		if verifyCode == "" {
+			l.Api.FailureWithStatusMessage(codes.MissingParam, "miss parameter verify_code").Abort()
+			return
+		}
+		l.request = &service_user_login.LoginMobileVerifyCodeRequest{
+			Mobile:     mobile,
+			VerifyCode: verifyCode,
+		}
+		l.LoginHandler = func(ctx context.Context, client service_user_login.UserLoginClient) func() (*service_user_login.LoginResultResponse, error) {
+			return func() (*service_user_login.LoginResultResponse, error) {
+				return client.MobileVerifyCode(ctx, l.request.(*service_user_login.LoginMobileVerifyCodeRequest))
+			}
 		}
 	}
+
 }

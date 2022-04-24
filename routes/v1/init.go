@@ -11,7 +11,5 @@ var ApiRouter = components.NewRouter(apiVersion)
 
 // LoadRoutes 需要注册的路由
 var LoadRoutes = []func(group *gin.RouterGroup){
-	UserRegister,
-	CourseRegister,
-	UserRegisterRegister,
+	UserRoutesRegister,
 }
